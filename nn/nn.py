@@ -106,7 +106,17 @@ class NeuralNetwork:
             Z_curr: ArrayLike
                 Current layer linear transformed matrix.
         """
-        pass
+        # apply weights and add biases (dot product)
+        Z = np.dot(A_prev, W_curr.T) + b_curr.T
+        # apply activation function
+        if activation == 'sigmoid':
+            A = self._sigmoid(Z)
+        elif activation == 'relu':
+            A = self._relu(Z)
+        else:
+            raise ValueError('Unsupported Activation function! choose between relu and sigmoid')
+
+        return A, Z
 
     def forward(self, X: ArrayLike) -> Tuple[ArrayLike, Dict[str, ArrayLike]]:
         """
@@ -122,7 +132,20 @@ class NeuralNetwork:
             cache: Dict[str, ArrayLike]:
                 Dictionary storing Z and A matrices from `_single_forward` for use in backprop.
         """
-        pass
+        curr = X
+        cache = dict()
+        cache['A0'] = X
+        cache['Z0'] = X
+        for idx, layer in enumerate(self.arch):
+            layer_idx = idx + 1
+            W_curr = self._param_dict[f'W{layer_idx}']
+            b_curr = self._param_dict[f'b{layer_idx}']
+            activation = layer['activation']
+
+            curr, Z = self._single_forward(W_curr, b_curr, curr, activation)
+            cache[f'A{layer_idx}'] = curr
+            cache[f'Z{layer_idx}'] = Z
+        return curr, cache
 
     def _single_backprop(
         self,
