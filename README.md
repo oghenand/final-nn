@@ -1,5 +1,8 @@
 # Final project: neural network
 
+# Github Badge
+[![final-nn](https://github.com/oghenand/final-nn/actions/workflows/test.yml/badge.svg)](https://github.com/oghenand/final-nn/actions/workflows/test.yml)
+
 ## Overview
 
 In this assignment, you will implement a neural network class from (almost) scratch. You will then apply your class to create both:
