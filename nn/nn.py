@@ -246,7 +246,8 @@ class NeuralNetwork:
             grad_dict: Dict[str, ArrayLike]
                 Dictionary containing the gradient information from most recent round of backprop.
         """
-        self._param_dict = {key: value - grad_dict[key] * self._lr for key, value in self._param_dict.items()}
+        for key in self._param_dict:
+            self._param_dict[key] -= self._lr * grad_dict[key]
 
     def fit(
         self,
@@ -416,6 +417,15 @@ class NeuralNetwork:
             loss: float
                 Average loss over mini-batch.
         """
+        if not len(y) > 0 or not len(y_hat) > 0:
+            raise ValueError('y and y_hat must not be empty!')
+        if not len(y) == len(y_hat):
+            raise ValueError('y and y_hat must be the same length!')
+        if not ((y==0)|(y==1)).all():
+            raise ValueError('y must be binary (0s and 1s!)')
+        if not (np.min(y_hat) >= 0 and np.max(y_hat) < 1):
+            raise ValueError('y_hat must be probabilities between 0 and 1!')
+        
         # enforce numerical stability w/ np.clip
         y_hat = np.clip(y_hat, 1e-6, 1 - 1e-6)
         loss = -np.mean(y*np.log(y_hat) + (1-y)*np.log(1-y_hat))
@@ -435,6 +445,15 @@ class NeuralNetwork:
             dA: ArrayLike
                 partial derivative of loss with respect to A matrix.
         """
+        if not len(y) > 0 or not len(y_hat) > 0:
+            raise ValueError('y and y_hat must not be empty!')
+        if not len(y) == len(y_hat):
+            raise ValueError('y and y_hat must be the same length!')
+        if not ((y==0)|(y==1)).all():
+            raise ValueError('y must be binary (0s and 1s!)')
+        if not (np.min(y_hat) >= 0 and np.max(y_hat) <= 1):
+            raise ValueError('y_hat must be probabilities between 0 and 1!')
+        
         # enforce numerical stability w/ np.clip
         y_hat = np.clip(y_hat, 1e-6, 1 - 1e-6)
         dA = -y/y_hat + (1-y)/(1-y_hat)
@@ -454,6 +473,11 @@ class NeuralNetwork:
             loss: float
                 Average loss of mini-batch.
         """
+        if not len(y) > 0 or not len(y_hat) > 0:
+            raise ValueError('y and y_hat must not be empty!')
+        if not len(y) == len(y_hat):
+            raise ValueError('y and y_hat must be the same length!')
+        
         loss = np.mean((y-y_hat)**2)
         return loss
 
@@ -471,5 +495,9 @@ class NeuralNetwork:
             dA: ArrayLike
                 partial derivative of loss with respect to A matrix.
         """
+        if not len(y) > 0 or not len(y_hat) > 0:
+            raise ValueError('y and y_hat must not be empty!')
+        if not len(y) == len(y_hat):
+            raise ValueError('y and y_hat must be the same length!')
         dA = -2*(y-y_hat) / len(y)
         return dA
