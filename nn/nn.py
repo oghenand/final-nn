@@ -423,7 +423,7 @@ class NeuralNetwork:
             raise ValueError('y and y_hat must be the same length!')
         if not ((y==0)|(y==1)).all():
             raise ValueError('y must be binary (0s and 1s!)')
-        if not (np.min(y_hat) >= 0 and np.max(y_hat) < 1):
+        if not (np.min(y_hat) >= 0 and np.max(y_hat) <= 1):
             raise ValueError('y_hat must be probabilities between 0 and 1!')
         
         # enforce numerical stability w/ np.clip
