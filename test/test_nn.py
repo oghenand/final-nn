@@ -218,7 +218,7 @@ def test_sample_seqs():
     sampled_seqs, sampled_labels = sample_seqs(seqs, labels)
 
     # TODO: check balanced
-    # assert sum(sampled_labels) == len(sampled_labels) - sum(sampled_labels), "Classes should be balanced after sampling!"
+    assert sum(sampled_labels) == len(sampled_labels) - sum(sampled_labels), "Classes should be balanced after sampling!"
     # check lengths match
     assert len(sampled_seqs) == len(sampled_labels), "Sequences and labels must be same length!"
     # check originals preserved
