@@ -78,5 +78,4 @@ def one_hot_encode_seqs(seq_arr: List[str]) -> ArrayLike:
     encodings = [
         encode_mapping[[base_encode[base] for base in seq]].flatten() for seq in seq_arr
     ]
-    encodings = np.array(encodings)
     return encodings

@@ -2,6 +2,7 @@
 import numpy as np
 from typing import List, Dict, Tuple, Union
 from numpy.typing import ArrayLike
+import random
 
 class NeuralNetwork:
     """
@@ -297,7 +298,6 @@ class NeuralNetwork:
             y_train_shuffled = y_train[idxs]
 
             while True:
-                # TODO: might have to shuffle idxs!
                 start_idx = int(curr_idx*self._batch_size)
                 end_idx = min(start_idx + self._batch_size, len(X_train_shuffled))
 
@@ -320,7 +320,7 @@ class NeuralNetwork:
             per_epoch_loss_train.append(epoch_loss/batch_count)
 
             # val_loss
-            val_output = self.predict(X_val)
+            val_output,_ = self.forward(X_val)
             per_epoch_loss_val.append(loss_func_dict[self._loss_func](y_val, val_output))
 
         return per_epoch_loss_train, per_epoch_loss_val
@@ -481,7 +481,7 @@ class NeuralNetwork:
         if not len(y) == len(y_hat):
             raise ValueError('y and y_hat must be the same length!')
         
-        loss = np.mean((y-y_hat)**2)
+        loss = np.mean((y.flatten()-y_hat.flatten())**2)
         return loss
 
     def _mean_squared_error_backprop(self, y: ArrayLike, y_hat: ArrayLike) -> ArrayLike:
@@ -502,5 +502,5 @@ class NeuralNetwork:
             raise ValueError('y and y_hat must not be empty!')
         if not len(y) == len(y_hat):
             raise ValueError('y and y_hat must be the same length!')
-        dA = -2*(y-y_hat) / len(y)
+        dA = -2*(y-y_hat)# / len(y)
         return dA
