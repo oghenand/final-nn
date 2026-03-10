@@ -188,9 +188,12 @@ class NeuralNetwork:
         else:
             raise ValueError('Unsupported activation function given.')
 
-        dW_curr = np.dot(dZ_curr.T, A_prev)/self._batch_size
+        # scale by batch_size
+        m = A_prev.shape[0]
+
+        dW_curr = np.dot(dZ_curr.T, A_prev)/m
         dA_prev = np.dot(dZ_curr, W_curr)
-        db_curr = np.sum(dZ_curr, axis=0, keepdims=True).T/self._batch_size
+        db_curr = np.sum(dZ_curr, axis=0, keepdims=True).T/m
 
         return dA_prev, dW_curr, db_curr
 
@@ -282,27 +285,27 @@ class NeuralNetwork:
                           'mean_squared_error': self._mean_squared_error}
         if self._loss_func not in ('binary_cross_entropy', 'mean_squared_error'):
             raise ValueError('Loss function not supported')
-        n_batches = len(X_train) // self._batch_size
         for epoch in range(self._epochs):
             epoch_loss = 0
             curr_idx = 0
+            batch_count = 0
 
-            # shuffle X_train and y_train
+            # shuffle X_train and y_train (good practice)
             idxs = np.arange(len(X_train))
             np.random.shuffle(idxs)
-            X_train = X_train[idxs]
-            y_train = y_train[idxs]
+            X_train_shuffled = X_train[idxs]
+            y_train_shuffled = y_train[idxs]
 
             while True:
                 # TODO: might have to shuffle idxs!
                 start_idx = int(curr_idx*self._batch_size)
-                end_idx = min(start_idx + self._batch_size, len(X_train))
+                end_idx = min(start_idx + self._batch_size, len(X_train_shuffled))
 
-                if start_idx >= len(X_train):
+                if start_idx >= len(X_train_shuffled):
                     break
-
-                X_batch = X_train[start_idx:end_idx]
-                y_batch = y_train[start_idx:end_idx]
+                batch_count += 1
+                X_batch = X_train_shuffled[start_idx:end_idx]
+                y_batch = y_train_shuffled[start_idx:end_idx]
 
                 # run forward
                 batch_output, batch_cache = self.forward(X_batch)
@@ -314,7 +317,7 @@ class NeuralNetwork:
                 self._update_params(grad_dict)
                 curr_idx +=1
 
-            per_epoch_loss_train.append(epoch_loss)
+            per_epoch_loss_train.append(epoch_loss/batch_count)
 
             # val_loss
             val_output = self.predict(X_val)
