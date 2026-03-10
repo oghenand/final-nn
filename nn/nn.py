@@ -282,7 +282,7 @@ class NeuralNetwork:
                           'mean_squared_error': self._mean_squared_error}
         if self._loss_func not in ('binary_cross_entropy', 'mean_squared_error'):
             raise ValueError('Loss function not supported')
-
+        n_batches = len(X_train) // self._batch_size
         for epoch in range(self._epochs):
             epoch_loss = 0
             curr_idx = 0
@@ -317,7 +317,7 @@ class NeuralNetwork:
             per_epoch_loss_train.append(epoch_loss)
 
             # val_loss
-            val_output, _ = self.forward(X_val)
+            val_output = self.predict(X_val)
             per_epoch_loss_val.append(loss_func_dict[self._loss_func](y_val, val_output))
 
         return per_epoch_loss_train, per_epoch_loss_val

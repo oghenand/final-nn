@@ -24,14 +24,16 @@ def sample_seqs(seqs: List[str], labels: List[bool]) -> Tuple[List[str], List[bo
     """
     data_len = len(labels)
     # first find minority class
-    minority_class = 0 if sum(labels) <=data_len/2 else 1
+    minority_class = 1 if sum(labels) <=data_len/2 else 0
     # find number to sample to balance
-    n_sample = sum([i for i in labels if i != minority_class]) - sum([i for i in labels if i == minority_class])
+    n_sample = len([i for i in labels if i != minority_class]) - len([i for i in labels if i == minority_class])
     # get idxs to sample from - create set for faster (O(1)) look up
-    idx_sample = set(random.choices([i for i,j in enumerate(labels) if j == minority_class], k=n_sample))
-    # extract idx labels and sequences
-    sampled_labels = [label for i, label in enumerate(labels) if i in idx_sample]
-    sampled_seqs = [seq for i, seq in enumerate(seqs) if i in idx_sample]
+    idx_sample = random.choices(
+        [i for i, j in enumerate(labels) if j == minority_class], 
+        k=n_sample
+    )
+    sampled_labels = [labels[i] for i in idx_sample]
+    sampled_seqs = [seqs[i] for i in idx_sample]
     # attach to original lists
     sampled_seqs = seqs + sampled_seqs
     sampled_labels = labels + sampled_labels
