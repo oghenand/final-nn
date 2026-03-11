@@ -502,5 +502,5 @@ class NeuralNetwork:
             raise ValueError('y and y_hat must not be empty!')
         if not len(y) == len(y_hat):
             raise ValueError('y and y_hat must be the same length!')
-        dA = -2*(y-y_hat)# / len(y)
+        dA = -2*(y-y_hat) / len(y)
         return dA
