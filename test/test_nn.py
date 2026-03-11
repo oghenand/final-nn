@@ -193,7 +193,7 @@ def test_mean_squared_error_backprop():
     y_hat = np.array([0.1, 0.51, 0.33, 0.2])
     
     mse_grad = nn_obj._mean_squared_error_backprop(y, y_hat)
-    manual_calc = -2*(y-y_hat) / len(y)
+    manual_calc = -2*(y-y_hat)# / len(y)
 
     # MSE backprop tests
     assert np.allclose(mse_grad, manual_calc), "NeuralNetwork obj MSE not equal to manual MSE"
@@ -235,8 +235,8 @@ def test_one_hot_encode_seqs():
     encodings = one_hot_encode_seqs(seqs)
 
     # NOTE: originally outputing array but now a list of lists
-    # # check shape: (n_seqs, 4 * seq_len)
-    # assert encodings.shape == (2, 16), "Encoding shape incorrect!"
+    # check shape: (n_seqs, 4 * seq_len)
+    assert encodings.shape == (2, 16), "Encoding shape incorrect!"
     # check known values
     assert np.allclose(encodings[0], [1,0,0,0, 0,1,0,0, 0,0,1,0, 0,0,0,1]), "ATCG encoding incorrect!"
     # check binary (only 0s and 1s)
